@@ -1,0 +1,40 @@
+#this code looks pretty good I think
+for files in infiles:
+    for filename in glob.glob(files):
+        if not ('_IT.i3.' in filename) and not ('_EHE.i3.' in filename):
+            file_list.append(filename)
+
+
+#copy pasted, deleted code that had old functions in it, says uncomment two lines for muon gun so that needs to be fixed, deleted one of those because it had effective area which needs to be reworked
+#kept code that didn't refer to a function defined in makeimages.py
+def TestCuts(file_list):
+    tray = I3Tray()
+    tray.AddModule("I3Reader","reader", FilenameList = file_list)
+    tray.AddSegment(QTot.CalQTot, "selfveto-qtot", pulses= PULSES_KEY)
+    tray.AddSegment(Reconstruction.OfflineCascadeReco, "CscdReco", suffix="_DP", Pulses='HLCPulses')
+    tray.AddSegment(Reconstruction.MuonReco, "MuonReco", Pulses='HLCPulses')
+    tray.AddSegment(Reconstruction.OfflineCascadeReco_noDC, "CscdReco_noDC", suffix="_noDC_DP", Pulses='HLCPulses')
+    tray.AddSegment(Reconstruction.MuonReco_noDC, "MuonReco_noDC", Pulses='HLCPulses')
+    tray.AddSegment(PolygonContainment.PolygonContainment, 'polyfit', geometry = GEO,RecoVertex='HESE3_VHESelfVetoVertexPos',outputname='_Veto')
+    tray.AddModule("I3WaveCalibrator", "calibrator")(        
+        ("Launches", "InIceRawData"),  # EHE burn sample IC86
+        ("Waveforms", "CalibratedWaveforms"),
+        ("WaveformRange", "CalibratedWaveformRange_DP"),
+        ("ATWDSaturationMargin",123), # 1023-900 == 123
+        ("FADCSaturationMargin",  0), # i.e. FADCSaturationMargin
+        ("Errata", "BorkedOMs"), # SAVE THIS IN L2 OUTPUT?
+        )
+    tray.AddModule("I3WaveformSplitter", "waveformsplit")(
+        ("Input","CalibratedWaveforms"),
+        ("HLC_ATWD","CalibratedWaveformsHLCATWD"),
+        ("HLC_FADC","CalibratedWaveformsHLCFADC"),
+        ("SLC","CalibratedWaveformsSLC"),
+        ("PickUnsaturatedATWD",True),
+        ("Force",True),
+        )
+    #uncomment Next two for muongun FIX THIS okay so effective_area WAS used
+    #tray.Add(I3MCTpmp_2_I3MCT,Streams=[icetray.I3Frame.DAQ,icetray.I3Frame.Physics])
+    tray.AddModule('TrashCan','thecan')
+    tray.Execute()
+    tray.Finish()
+    return
