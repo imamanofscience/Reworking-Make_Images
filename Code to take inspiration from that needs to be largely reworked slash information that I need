@@ -33,3 +33,23 @@ def Check_Data(frame):
 
 
 
+
+    if frame.Has('SPEFit32_DPFitParams') and frame.Has('CascadeLlhVertexFit_DPParams'):
+        veto_cas_rlogl = frame['CascadeLlhVertexFit_DPParams'].ReducedLlh
+        veto_spe_rlogl = frame['SPEFit32_DPFitParams'].rlogl
+        trck = frame['CascadeLlhVertexFit_DP']
+        cscd = frame['SPEFit32_DP']
+
+    if frame.Has('SPEFit32_noDC_DPFitParams') and frame.Has('CascadeLlhVertexFit_noDC_DPParams'):
+        veto_cas_rlogl_ndc = frame['CascadeLlhVertexFit_noDC_DPParams'].ReducedLlh
+        veto_spe_rlogl_ndc = frame['SPEFit32_noDC_DPFitParams'].rlogl
+       
+    if frame.Has('HESE3_VHESelfVetoVertexPos'):
+        veto_svv_z = frame['HESE3_VHESelfVetoVertexPos'].z
+       
+    if frame.Has("LeastDistanceToPolygon_Veto"):
+        veto_ldp = frame["LeastDistanceToPolygon_Veto"].value
+
+    if frame.Has('depthFirstHit'):     
+        veto_fh_z = frame['depthFirstHit'].value
+    
