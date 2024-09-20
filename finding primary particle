@@ -1,1 +1,43 @@
+    primary_array = np.zeros(1,dtype = particle_dtype)
+    prim_daughter_array = np.zeros(1,dtype = particle_dtype)
+    if not data_type == 'real_data':
+    #find primary particle
+        mctree = frame[MCTREE_KEY]
+        daughter = None
+        if data_type == 'genie':
+            primary_daughter = dataclasses.get_most_energetic_neutrino(mctree)
+            
+            max_energy = 0
+            for part in mctree.children(prim.id):
+                if (part.energy > max_energy) and (abs(part.pdg_encoding) in [11,12,13,14,15,16,17,18]):
+                    max_enegy = part.energy
+                    daughter = part
+        else:
+            primary_daughter = dataclasses.get_most_energetic_primary(mctree)
+            daughter = dataclasses.get_most_energetic_muon(mctree)
+           
+        
+        #if no children, then daughter is a duplicate of primary
+        if  daughter is None:
+            primary[["tree_id","pdg","energy","position","direction","time","length"]] =\
+            ([primary_daughter.id.majorID, prim.id.minorID], prim.pdg_encoding, prim.energy,\
+             [primary_daughter.pos.x,prim.pos.y,prim.pos.z],\
+             [primary_daughter.dir.zenith,prim.dir.azimuth],prim.time, prim.length)
 
+            prim_daughter[["tree_id","pdg","energy","position","direction","time","length"]] =\
+            ([primary_daughter.id.majorID, prim.id.minorID], prim.pdg_encoding, prim.energy,\
+             [primary_daughter.pos.x,prim.pos.y,prim.pos.z],\
+             [primary_daughter.dir.zenith,prim.dir.azimuth], prim.time, prim.length)
+
+         #if there are children, daughter is the child with highest energy
+        else:
+            primary_array[["tree_id","pdg","energy","position","direction","time","length"]] =\
+            ([primary_daughter.id.majorID, prim.id.minorID], prim.pdg_encoding, prim.energy,\
+             [primary_daughter.pos.x,prim.pos.y,prim.pos.z],\
+             [primary_daughter.dir.zenith,prim.dir.azimuth],prim.time, prim.length)
+        
+            prim_daughter_array[["tree_id","pdg","energy","position","direction","time","length"]] =\
+            ([daughter.id.majorID, daughter.id.minorID], daughter.pdg_encoding,daughter.energy,\
+             [daughter.pos.x,daughter.pos.y,daughter.pos.z],\
+             [daughter.dir.zenith,daughter.dir.azimuth],daughter.time,daughter.length)
+   
