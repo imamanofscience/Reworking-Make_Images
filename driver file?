@@ -101,18 +101,6 @@ for file in file_list:
     outfilename = outfile+"_"+sp[-4]+"_"+sp[-3]+"_data"+".npz"
     txtfilename = outfile+"_"+sp[-4]+"_"+sp[-3]+"_text"+".txt"
 
-    if data_type =='genie':
-     #genie function
-    
-    elif data_type =='corsika':
-      #corsika function
-   
-    elif data_type == 'muongun':
-      #muongun function
-
-    elif data_type == 'data': #change this variable name?
-      # 'data' function
-        
     TestCuts(file_list = [gfile,file])    
     with open(txtfilename, 'w+') as f:
         f.write(file+"\n")
