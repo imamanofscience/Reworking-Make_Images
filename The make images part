@@ -213,4 +213,4 @@ def Make_Image(frame):
         event[["id","image","qtot","qst","primary","prim_daughter","trck_reco","cscd_reco","logan_veto","hese","weight_dict"]]=\
            (id[0], im, qtot, st_info, primary[0], prim_daughter[0],trck_reco[0],cscd_reco[0],veto[0],hese[0], weight[0])
 
-    data.append(event)
+    data_information.append(event)
