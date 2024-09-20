@@ -113,7 +113,7 @@ for file in file_list:
     elif data_type == 'data': #change this variable name?
       # 'data' function
         
-#    TestCuts(file_list = [gfile,file])    
+    TestCuts(file_list = [gfile,file])    
     with open(txtfilename, 'w+') as f:
         f.write(file+"\n")
 
