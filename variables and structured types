@@ -28,7 +28,14 @@ MAX_TIME_SHIFT = 700 #ns or ~half an image
 DEFAULT_INDEX = 2.88
 DEFAULT_PHI = 2.1467
 
-
+ 
+    veto_cas_rlogl = 999
+    veto_spe_rlogl = -999
+    veto_cas_rlogl_ndc = 999
+    veto_spe_rlogl_ndc = -999
+    veto_fh_z = -999
+    veto_svv_z = -999
+    veto_ldp = -999
 
 
 #not sure if this needs to be reworked or not
