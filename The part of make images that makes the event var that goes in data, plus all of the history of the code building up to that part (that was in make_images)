@@ -4,6 +4,14 @@ def Make_Image(frame):
 
     trck_reco = np.zeros(1,dtype = particle_dtype)
 
+    for ch in range(N_CHANNELS): 
+        st_info[['q','num','dist']][ch] = (near_max_strings[ch][0],near_max_strings[ch][1],near_max_strings[ch][2])
+    
+    if (st_info['q'][1] < QST1_THRES) or (st_info['q'][2] < QST2_THRES):
+        return False
+
+    global st_info
+
 
    trck_reco[["tree_id","pdg","energy","position","direction","time","length"]] =\
     ([trck.id.majorID, trck.id.minorID], trck.pdg_encoding, trck.energy,[trck.pos.x,trck.pos.y,trck.pos.z],\
