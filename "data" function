@@ -1,1 +1,44 @@
+#data function
+
+        save = []
+        calib = frame['I3Calibration']
+        status = frame['I3DetectorStatus']
+        width = 3.33334
+        for om, ps in pulses.items():
+
+            if not om.string in st_info['num']:
+                continue
+
+            if om in wf_map:
+                has_good_wf = False
+                for wf in wf_map.get(om, []):
+                    if wf.status == 0:
+                        has_good_wf = True
+                if has_good_wf:
+                    continue
+
+                    
+            chl = np.where(st_info['num'] == om.string)
+            p_time = np.min([i.time for i in ps])
+            min_time = p_time - width*15
+            max_time = p_time + width*112
+            times = np.linspace(min_time, max_time, 128)
+
+            cal = calib.dom_cal[om]
+            stat = status.dom_status[om]
+            wf_vals=wavereform.refold_pulses(ps, I3Waveform.ATWD, 0, cal, stat, times, False)
+            
+            wfms.append({
+                    'wfm': wf_vals,
+                    'time': min_time,  
+                    'width': width,
+                    'dom_idx': om.om - 1,
+                    'img_ch': chl[0][0],
+                    'om_pos': [geometry[om].position.x,geometry[om].position.y,geometry[om].position.z]
+                    })
+
+
+
+
+
 
