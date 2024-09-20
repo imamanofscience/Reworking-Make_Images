@@ -1,12 +1,5 @@
-if data_type == 'muongun':
-        w = frame['MuonWeight'].value
-        event[["id","image","qtot","qst","primary","prim_daughter","logan_veto","hese","weight_val"]]=\
-           (id[0], im, qtot, st_info, primary[0], prim_daughter[0], veto[0],hese[0], w)
+#genie function
 
-
-
-
-if data_type =='genie':
     WEIGHT_KEY = "I3MCWeightDict"
     PULSES_KEY = 'SplitInIcePulses'
     MCTREE_KEY = 'I3MCTree'
@@ -57,8 +50,21 @@ if data_type =='genie':
             ('EnergyLost',np.float32)
         ]
     )
-elif data_type =='corsika':
-    WEIGHT_KEY = "CorsikaWeightMap"
+
+
+        w = dict(frame[WEIGHT_KEY])
+        for key, val in w.items():
+            if key in weight_dtype.names:
+                weight[key] = val
+#        3 lines above replace the 1 line below.  Idea is to only copy fields expected in weight_dtype.
+#        The main quantities we care about are (I think):
+#           OneWeight, PrimaryNeutrinoEnergy, InteractionType, PrimaryNeutrinoZenith, PrimaryNeutrinoType
+#        weight[list(w.keys())] = tuple(w.values())
+
+
+#corsika function
+
+   WEIGHT_KEY = "CorsikaWeightMap"
     MCTREE_KEY = 'I3MCTree'
     if year == 2012:
         PULSES_KEY = 'SplitInIcePulses'
@@ -187,29 +193,34 @@ elif data_type =='corsika':
                 ('Weight',np.float32)
             ]
         )       
-elif data_type == 'muongun':
-    WEIGHT_KEY = 'None'
-    PULSES_KEY = 'SplitInIcePulses'
-    MCTREE_KEY = 'I3MCTree_preMuonProp'
-    weight_dtype = np.dtype(
-        [
-            ('ThisisData',np.float32),
-        ]
-    )  
+
+        w = dict(frame[WEIGHT_KEY])
+        for key, val in w.items():
+            if key in weight_dtype.names:
+                weight[key] = val
+#        3 lines above replace the 1 line below.  Idea is to only copy fields expected in weight_dtype.
+#        The main quantities we care about are (I think):
+#           OneWeight, PrimaryNeutrinoEnergy, InteractionType, PrimaryNeutrinoZenith, PrimaryNeutrinoType
+#        weight[list(w.keys())] = tuple(w.values())
 
 
-else: #data
-    WEIGHT_KEY = 'None'
-    PULSES_KEY = 'SplitInIcePulses'
-    MCTREE_KEY = 'None'
-    weight_dtype = np.dtype(
-        [
-            ('ThisisData',np.float32),
-        ]
-    )  
+#muongun function
 
-#Output data format         
-if data_type == 'muongun':
+        w = frame['MuonWeight'].value
+        event[["id","image","qtot","qst","primary","prim_daughter","logan_veto","hese","weight_val"]]=\
+           (id[0], im, qtot, st_info, primary[0], prim_daughter[0], veto[0],hese[0], w)
+
+        w = frame['MuonWeight'].value
+        event[["id","image","qtot","qst","primary","prim_daughter","logan_veto","hese","weight_val"]]=\
+           (id[0], im, qtot, st_info, primary[0], prim_daughter[0], veto[0],hese[0], w)
+    else:
+        event[["id","image","qtot","qst","primary","prim_daughter","trck_reco","cscd_reco","logan_veto","hese","weight_dict"]]=\
+           (id[0], im, qtot, st_info, primary[0], prim_daughter[0],trck_reco[0],cscd_reco[0],veto[0],hese[0], weight[0])
+#    print(event['qtot'],event['qst'],event['logan_veto'])
+#    print(event['trck_reco'])
+
+
+
     info_dtype = np.dtype(
         [
             ("id", id_dtype),
@@ -223,28 +234,7 @@ if data_type == 'muongun':
             ("weight_val", np.float32),        
         ]
     )
-     
-else:
-    info_dtype = np.dtype(
-        [
-            ("id", id_dtype),
-            ("image", np.float32, (N_X_BINS, N_Y_BINS, N_CHANNELS)),
-            ("qtot", np.float32),
-            ("qst", st_info_dtype, N_CHANNELS),
-            ("primary", particle_dtype),
-            ("prim_daughter", particle_dtype),
-            ("trck_reco", particle_dtype),
-            ("cscd_reco", particle_dtype),
-            ("logan_veto", veto_dtype),                                                  
-            ("hese", hese_dtype),
-            ("weight_dict", weight_dtype),        
-        ]
-    )
 
-
-
-
-if data_type == 'muongun':
     muongun_nfiles={21317:9996,21316:9999,21315:15000}
     generator_set1_infile=glob.glob("/data/sim/IceCube/2016/generated/MuonGun/21315/0000000-0000999/*.i3.zst")
     generator_set1=harvest_generators([generator_set1_infile[0]]); infiles_set1 = muongun_nfiles[21315]
@@ -267,38 +257,8 @@ if data_type == 'muongun':
                 return False
 
 
+#data function
 
-    if data_type in ['genie', 'corsika']:
-        w = dict(frame[WEIGHT_KEY])
-        for key, val in w.items():
-            if key in weight_dtype.names:
-                weight[key] = val
-#        3 lines above replace the 1 line below.  Idea is to only copy fields expected in weight_dtype.
-#        The main quantities we care about are (I think):
-#           OneWeight, PrimaryNeutrinoEnergy, InteractionType, PrimaryNeutrinoZenith, PrimaryNeutrinoType
-#        weight[list(w.keys())] = tuple(w.values())
-
-
-
-if not data_type == 'data':
-    #find primary particle
-        mctree = frame[MCTREE_KEY]
-        daughter = None
-        if data_type == 'genie':
-            prim = dataclasses.get_most_energetic_neutrino(mctree)
-            
-            max_energy = 0
-            for part in mctree.children(prim.id):
-                if (part.energy > max_energy) and (abs(part.pdg_encoding) in [11,12,13,14,15,16,17,18]):
-                    max_enegy = part.energy
-                    daughter = part
-        else:
-            prim = dataclasses.get_most_energetic_primary(mctree)
-            daughter = dataclasses.get_most_energetic_muon(mctree)
-           
-
-
-   if data_type == 'data':
         save = []
         calib = frame['I3Calibration']
         status = frame['I3DetectorStatus']
@@ -336,12 +296,81 @@ if not data_type == 'data':
                     'om_pos': [geometry[om].position.x,geometry[om].position.y,geometry[om].position.z]
                     })
 
-    if data_type == 'muongun':
-        w = frame['MuonWeight'].value
-        event[["id","image","qtot","qst","primary","prim_daughter","logan_veto","hese","weight_val"]]=\
-           (id[0], im, qtot, st_info, primary[0], prim_daughter[0], veto[0],hese[0], w)
-    else:
-        event[["id","image","qtot","qst","primary","prim_daughter","trck_reco","cscd_reco","logan_veto","hese","weight_dict"]]=\
-           (id[0], im, qtot, st_info, primary[0], prim_daughter[0],trck_reco[0],cscd_reco[0],veto[0],hese[0], weight[0])
-#    print(event['qtot'],event['qst'],event['logan_veto'])
-#    print(event['trck_reco'])
+
+
+
+
+
+
+
+ 
+elif data_type == 'muongun':
+    WEIGHT_KEY = 'None'
+    PULSES_KEY = 'SplitInIcePulses'
+    MCTREE_KEY = 'I3MCTree_preMuonProp'
+    weight_dtype = np.dtype(
+        [
+            ('ThisisData',np.float32),
+        ]
+    )  
+
+
+else: #data
+    WEIGHT_KEY = 'None'
+    PULSES_KEY = 'SplitInIcePulses'
+    MCTREE_KEY = 'None'
+    weight_dtype = np.dtype(
+        [
+            ('ThisisData',np.float32),
+        ]
+    )  
+
+#Output data format         
+if data_type == 'muongun':
+
+     
+else:
+    info_dtype = np.dtype(
+        [
+            ("id", id_dtype),
+            ("image", np.float32, (N_X_BINS, N_Y_BINS, N_CHANNELS)),
+            ("qtot", np.float32),
+            ("qst", st_info_dtype, N_CHANNELS),
+            ("primary", particle_dtype),
+            ("prim_daughter", particle_dtype),
+            ("trck_reco", particle_dtype),
+            ("cscd_reco", particle_dtype),
+            ("logan_veto", veto_dtype),                                                  
+            ("hese", hese_dtype),
+            ("weight_dict", weight_dtype),        
+        ]
+    )
+
+
+
+
+
+
+
+
+
+
+
+if not data_type == 'data':
+    #find primary particle
+        mctree = frame[MCTREE_KEY]
+        daughter = None
+        if data_type == 'genie':
+            prim = dataclasses.get_most_energetic_neutrino(mctree)
+            
+            max_energy = 0
+            for part in mctree.children(prim.id):
+                if (part.energy > max_energy) and (abs(part.pdg_encoding) in [11,12,13,14,15,16,17,18]):
+                    max_enegy = part.energy
+                    daughter = part
+        else:
+            prim = dataclasses.get_most_energetic_primary(mctree)
+            daughter = dataclasses.get_most_energetic_muon(mctree)
+           
+
+
