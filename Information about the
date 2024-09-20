@@ -1,0 +1,13 @@
+
+     event = np.zeros(1,dtype = info_dtype)    
+    #Log all the event info
+    if data_type == 'muongun':
+        w = frame['MuonWeight'].value
+        event[["id","image","qtot","qst","primary","prim_daughter","logan_veto","hese","weight_val"]]=\
+           (id[0], im, qtot, st_info, primary[0], prim_daughter[0], veto[0],hese[0], w)
+    else:
+        event[["id","image","qtot","qst","primary","prim_daughter","trck_reco","cscd_reco","logan_veto","hese","weight_dict"]]=\
+           (id[0], im, qtot, st_info, primary[0], prim_daughter[0],trck_reco[0],cscd_reco[0],veto[0],hese[0], weight[0])
+    data.append(event)
+
+#variables to find here: im, qtot, id[0], st_info, primary[0], prim_daughter[0], veto[0], hese[0], trck_reco[0], cscd_reco[0], weight[0]
