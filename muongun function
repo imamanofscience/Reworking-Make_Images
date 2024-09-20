@@ -48,3 +48,14 @@
         if data_type == 'genie': #Keep only events with right interaction type
             if frame[WEIGHT_KEY]['InteractionType'] != it:
                 return False
+
+
+elif data_type == 'muongun':
+    WEIGHT_KEY = 'None'
+    PULSES_KEY = 'SplitInIcePulses'
+    MCTREE_KEY = 'I3MCTree_preMuonProp'
+    weight_dtype = np.dtype(
+        [
+            ('ThisisData',np.float32),
+        ]
+    )  
