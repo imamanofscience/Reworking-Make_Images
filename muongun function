@@ -9,8 +9,7 @@
     else:
         event[["id","image","qtot","qst","primary","prim_daughter","trck_reco","cscd_reco","logan_veto","hese","weight_dict"]]=\
            (id[0], im, qtot, st_info, primary[0], prim_daughter[0],trck_reco[0],cscd_reco[0],veto[0],hese[0], weight[0])
-#    print(event['qtot'],event['qst'],event['logan_veto'])
-#    print(event['trck_reco'])
+
 
 
 
@@ -44,7 +43,6 @@
 
     passed = has_header and has_weights and has_rawdata and has_mctree and has_pulses 
     if passed:
-#        print("PASSES")
         if data_type == 'genie': #Keep only events with right interaction type
             if frame[WEIGHT_KEY]['InteractionType'] != it:
                 return False
