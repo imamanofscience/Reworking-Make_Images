@@ -40,5 +40,16 @@
 
 
 
+else: #data
+    WEIGHT_KEY = 'None'
+    PULSES_KEY = 'SplitInIcePulses'
+    MCTREE_KEY = 'None'
+    weight_dtype = np.dtype(
+        [
+            ('ThisisData',np.float32),
+        ]
+    )  
+
+
 
 
