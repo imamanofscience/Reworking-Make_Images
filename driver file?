@@ -1,0 +1,133 @@
+#!/bin/sh /cvmfs/icecube.opensciencegrid.org/py2-v3.1.1/icetray-start
+#METAPROJECT combo/stable
+
+# python v3: /bin/sh /cvmfs/icecube.opensciencegrid.org/py3-v4.1.1/icetray-start
+
+
+import icecube
+from I3Tray import *
+from icecube import icetray, dataclasses, dataio, WaveCalibrator, wavereform, MuonGun
+from icecube.recclasses import I3LineFitParams
+from icecube.recclasses import I3CscdLlhFitParams
+from icecube.recclasses import I3TensorOfInertiaFitParams
+from icecube.gulliver import I3LogLikelihoodFitParams
+from icecube.weighting.fluxes import GaisserH4a
+from icecube.icetray import I3Units
+from icecube.dataclasses import I3Waveform
+icetray.set_log_level(icetray.I3LogLevel.LOG_FATAL)
+#icetray.set_log_level(icetray.I3LogLevel.LOG_INFO)
+#vars
+from icecube.common_variables import hit_statistics
+import Reconstruction
+import PolygonContainment 
+import QTot 
+
+
+import numpy as np
+import glob
+import sys
+import argparse
+import re
+
+#not sure if import statements should be reworked, or argument parser for that matter
+
+parser = argparse.ArgumentParser()
+parser.add_argument("-i","--infile",
+                    dest="infile",
+                    type=str,
+                    nargs = "+",
+                    help="[I]nfile name")
+
+parser.add_argument("-o","--outfile",
+                    dest="outfile",
+                    type=str,
+                    default="Out",
+                    help="base name for outfile")
+
+parser.add_argument("-gcd","--gcdfile",
+                    dest="gcdfile",
+                    type=str,
+                    help="gcdfile location")
+
+parser.add_argument("-t","--data_type",
+                    dest="data_type",
+                    type=str,
+                    choices=['genie','corsika','muongun','data'],
+                    help="corsika, genie, muongun, data")
+
+parser.add_argument("-y","--year",
+                    dest="year",
+                    type=int,
+                    default=2012,
+                    choices=[2011,2012,2016],
+                    help="production year, only matters for corsika")
+
+parser.add_argument("-set","--dataset",
+                    dest="dataset",
+                    type=int,
+                    default=-1,
+                    help="corsika dataset number")
+
+parser.add_argument('-it', '--interaction_type',
+                    dest='it',
+                    type=int,
+                    default=1,
+                    help='Interaction types are : CC -1, NC -2 ,GR-3')
+
+args = parser.parse_args()
+infiles=args.infile
+outfile=args.outfile
+gfile=args.gcdfile
+it=args.it
+dataset=args.dataset
+data_type=args.data_type
+year= args.year
+
+for files in infiles:
+    for filename in glob.glob(files):
+        if not ('_IT.i3.' in filename) and not ('_EHE.i3.' in filename):
+            file_list.append(filename)
+
+if data_type =='genie':
+   #genie function
+    
+elif data_type =='corsika':
+    #corsika function
+   
+elif data_type == 'muongun':
+    #muongun function
+
+elif data_type == 'data': #change this variable name?
+    # 'data' function
+   
+
+for file in file_list:
+    #main data array
+    data = []
+    qtot = 0 #total event charge
+    st_info = np.zeros(N_CHANNELS,dtype = st_info_dtype) #[Qst, Nst, DistST] for each image
+    llhcut = 0
+
+    sp = re.split('\.|/',file)
+    outfilename = outfile+"_"+sp[-4]+"_"+sp[-3]+"_data"+".npz"
+    txtfilename = outfile+"_"+sp[-4]+"_"+sp[-3]+"_text"+".txt"
+    
+#    with open(txtfilename, 'w+') as f:
+#        f.write(file+"\n")
+        
+    TestCuts(file_list = [gfile,file])
+    print(file, " i3 file done")
+    
+    with open(txtfilename, 'w+') as f:
+        f.write(file+"\n")
+
+    data = np.array(data)
+    with open(txtfilename, 'a') as f:
+        f.write(str(data.shape[0])+"\n")
+    
+    if data.shape[0] == 0:
+        print("ZERO EVENTS PASSES, NO IMAGES SAVED")
+    else:
+        np.savez_compressed(outfilename, data)
+
+    print("finished", data.shape)
