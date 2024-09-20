@@ -1,1 +1,63 @@
+#genie function
+
+    WEIGHT_KEY = "I3MCWeightDict"
+    PULSES_KEY = 'SplitInIcePulses'
+    MCTREE_KEY = 'I3MCTree'
+    weight_dtype = np.dtype(
+        [
+            ('PrimaryNeutrinoAzimuth',np.float32), 
+            ('TotalColumnDepthCGS',np.float32), 
+            ('MaxAzimuth',np.float32), 
+            ('SelectionWeight',np.float32), 
+            ('InIceNeutrinoEnergy',np.float32), 
+            ('PowerLawIndex',np.float32), 
+            ('TotalPrimaryWeight',np.float32), 
+            ('PrimaryNeutrinoZenith',np.float32), 
+            ('TotalWeight',np.float32), 
+            ('PropagationWeight',np.float32), 
+            ('NInIceNus',np.float32), 
+            ('TrueActiveLengthBefore',np.float32), 
+            ('TypeWeight',np.float32), 
+            ('PrimaryNeutrinoType',np.int64), 
+            ('RangeInMeter',np.float32), 
+            ('BjorkenY',np.float32), 
+            ('MinZenith',np.float32), 
+            ('InIceNeutrinoType',np.float32), 
+            ('CylinderRadius',np.float32), 
+            ('BjorkenX',np.float32), 
+            ('InteractionPositionWeight',np.float32), 
+            ('RangeInMWE',np.float32), 
+            ('InteractionColumnDepthCGS',np.float32), 
+            ('CylinderHeight',np.float32), 
+            ('MinAzimuth',np.float32), 
+            ('TotalXsectionCGS',np.float32), 
+            ('OneWeightPerType',np.float32), 
+            ('ImpactParam',np.float32), 
+            ('InteractionType',np.float32), 
+            ('TrueActiveLengthAfter',np.float32), 
+            ('MaxZenith',np.float32), 
+            ('InteractionXsectionCGS',np.float32), 
+            ('PrimaryNeutrinoEnergy',np.float32), 
+            ('DirectionWeight',np.float32), 
+            ('InjectionAreaCGS',np.float32), 
+            ('MinEnergyLog',np.float32), 
+            ('SolidAngle',np.float32), 
+            ('LengthInVolume',np.float32), 
+            ('NEvents',np.uint32), 
+            ('OneWeight',np.float32), 
+            ('MaxEnergyLog',np.float32), 
+            ('InteractionWeight',np.float32), 
+            ('EnergyLost',np.float32)
+        ]
+    )
+
+
+        w = dict(frame[WEIGHT_KEY])
+        for key, val in w.items():
+            if key in weight_dtype.names:
+                weight[key] = val
+#        3 lines above replace the 1 line below.  Idea is to only copy fields expected in weight_dtype.
+#        The main quantities we care about are (I think):
+#           OneWeight, PrimaryNeutrinoEnergy, InteractionType, PrimaryNeutrinoZenith, PrimaryNeutrinoType
+#        weight[list(w.keys())] = tuple(w.values())
 
