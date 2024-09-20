@@ -38,6 +38,20 @@ for files in infiles:
 #copy pasted, deleted code that had old functions in it, says uncomment two lines for muon gun so that needs to be fixed, deleted one of those because it had effective area which needs to be reworked
 #kept code that didn't refer to a function defined in makeimages.py
 def TestCuts(file_list):
+
+    if data_type =='genie':
+     #genie function
+    
+    elif data_type =='corsika':
+      #corsika function
+   
+    elif data_type == 'muongun':
+      #muongun function
+
+    elif data_type == 'data': #change this variable name?
+      # 'data' function
+        
+
     tray = I3Tray()
     tray.AddModule("I3Reader","reader", FilenameList = file_list)
     tray.AddSegment(QTot.CalQTot, "selfveto-qtot", pulses= PULSES_KEY)
