@@ -88,17 +88,6 @@ for files in infiles:
         if not ('_IT.i3.' in filename) and not ('_EHE.i3.' in filename):
             file_list.append(filename)
 
-if data_type =='genie':
-   #genie function
-    
-elif data_type =='corsika':
-    #corsika function
-   
-elif data_type == 'muongun':
-    #muongun function
-
-elif data_type == 'data': #change this variable name?
-    # 'data' function
    
 
 for file in file_list:
@@ -111,13 +100,20 @@ for file in file_list:
     sp = re.split('\.|/',file)
     outfilename = outfile+"_"+sp[-4]+"_"+sp[-3]+"_data"+".npz"
     txtfilename = outfile+"_"+sp[-4]+"_"+sp[-3]+"_text"+".txt"
+
+    if data_type =='genie':
+     #genie function
     
-#    with open(txtfilename, 'w+') as f:
-#        f.write(file+"\n")
+    elif data_type =='corsika':
+      #corsika function
+   
+    elif data_type == 'muongun':
+      #muongun function
+
+    elif data_type == 'data': #change this variable name?
+      # 'data' function
         
-    TestCuts(file_list = [gfile,file])
-    print(file, " i3 file done")
-    
+#    TestCuts(file_list = [gfile,file])    
     with open(txtfilename, 'w+') as f:
         f.write(file+"\n")
 
@@ -125,9 +121,6 @@ for file in file_list:
     with open(txtfilename, 'a') as f:
         f.write(str(data.shape[0])+"\n")
     
-    if data.shape[0] == 0:
-        print("ZERO EVENTS PASSES, NO IMAGES SAVED")
-    else:
+    if data.shape[0] != 0:
         np.savez_compressed(outfilename, data)
 
-    print("finished", data.shape)
