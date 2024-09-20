@@ -1,3 +1,33 @@
+#will probably have to keep most of these import statements
+
+import icecube
+from I3Tray import *
+from icecube import icetray, dataclasses, dataio, WaveCalibrator, wavereform, MuonGun
+from icecube.recclasses import I3LineFitParams
+from icecube.recclasses import I3CscdLlhFitParams
+from icecube.recclasses import I3TensorOfInertiaFitParams
+from icecube.gulliver import I3LogLikelihoodFitParams
+from icecube.weighting.fluxes import GaisserH4a
+from icecube.icetray import I3Units
+from icecube.dataclasses import I3Waveform
+icetray.set_log_level(icetray.I3LogLevel.LOG_FATAL)
+#icetray.set_log_level(icetray.I3LogLevel.LOG_INFO)
+#vars
+from icecube.common_variables import hit_statistics
+import Reconstruction
+import PolygonContainment 
+import QTot 
+
+
+import numpy as np
+import glob
+import sys
+import argparse
+import re
+
+
+
+
 #this code looks pretty good I think
 for files in infiles:
     for filename in glob.glob(files):
