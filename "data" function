@@ -1,4 +1,6 @@
 #data function
+#primary particle finder is very data type specific and I think it should be in these functions
+
 
         save = []
         calib = frame['I3Calibration']
