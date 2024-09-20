@@ -1,3 +1,23 @@
+def Check_Data(frame):
+    #HEADER and STREAM
+    has_header = frame.Has("I3EventHeader") #all event should have a header
+    has_stream = frame["I3EventHeader"].sub_event_stream != "NullSplit"
+    if not has_stream:
+        return False #Dont use NullSplit frames
+
+    has_rawdata =  False #data wich stores raw waveform info
+    if frame.Has("InIceRawData"):
+        try:
+            raw_data = 0
+            raw_data = frame["InIceRawData"]
+            if len(raw_data) != 0:
+                has_rawdata = True
+            else: 
+                has_rawdata = False
+        except:
+            has_rawdata = False
+
+
 
      event = np.zeros(1,dtype = info_dtype)    
     #Log all the event info
