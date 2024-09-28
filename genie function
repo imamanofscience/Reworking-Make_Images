@@ -1,9 +1,13 @@
-#genie function
+class Genie_attributes:
+    def __init__(self):
+        WEIGHT_KEY = "I3MCWeightDict"
+        PULSES_KEY = 'SplitInIcePulses'
+        MCTREE_KEY = 'I3MCTree'
 
-    WEIGHT_KEY = "I3MCWeightDict"
-    PULSES_KEY = 'SplitInIcePulses'
-    MCTREE_KEY = 'I3MCTree'
-    weight_dtype = np.dtype(
+
+
+
+muon_weight_dtype = np.dtype(
         [
             ('PrimaryNeutrinoAzimuth',np.float32), 
             ('TotalColumnDepthCGS',np.float32), 
