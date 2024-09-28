@@ -1,5 +1,5 @@
 #corsika function
-class Genie_attributes:
+class corsika_attributes:
    def __init__(self):
    WEIGHT_KEY = "CorsikaWeightMap"
    MCTREE_KEY = 'I3MCTree'
@@ -12,7 +12,7 @@ class Genie_attributes:
 
 
         if dataset == 12379:
-            weight_dtype = np.dtype(
+            corsika_weight_dtype = np.dtype(
             [
                 ('AreaSum',np.float32),
                 ('Atmosphere',np.float32),
