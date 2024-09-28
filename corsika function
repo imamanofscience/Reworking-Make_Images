@@ -1,9 +1,16 @@
 #corsika function
-
+class Genie_attributes:
+   def __init__(self):
    WEIGHT_KEY = "CorsikaWeightMap"
-    MCTREE_KEY = 'I3MCTree'
+   MCTREE_KEY = 'I3MCTree'
+
+#incorporate this somehow
     if year == 2012:
         PULSES_KEY = 'SplitInIcePulses'
+
+
+
+
         if dataset == 12379:
             weight_dtype = np.dtype(
             [
