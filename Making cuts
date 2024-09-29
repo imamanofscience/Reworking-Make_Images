@@ -1,0 +1,174 @@
+muongun generation probability calculations- takes infiles
+
+check_data: skips events that don't have the required info- takes frame
+
+get_charges: max string stuff- takes frame
+
+llh_cut: checks if 12 modules hit- frame
+
+
+def making_cuts(infiles): #change names?
+
+
+def harvest_generators(infiles):
+    generator = None
+    for fname in infiles:
+        f = dataio.I3File(fname)
+        fr = f.pop_frame(icetray.I3Frame.Stream('S'))
+        f.close()
+        if fr is not None:
+            for k in fr.keys():
+                if("I3TriggerHierarchy" in k): continue #hack due to I3TriggerHierchy bug
+                v = fr[k]
+                if isinstance(v, MuonGun.GenerationProbability):
+                    print ("found MG GP")
+                    if generator is None:
+                        generator = v
+                    else:
+                        generator += v
+    return generator
+
+
+
+def Check_Data(frame):
+    #HEADER and STREAM
+    has_header = frame.Has("I3EventHeader") #all event should have a header
+    has_stream = frame["I3EventHeader"].sub_event_stream != "NullSplit"
+    if not has_stream:
+        return False #Dont use NullSplit frames
+
+    has_rawdata =  False #data wich stores raw waveform info
+    if frame.Has("InIceRawData"):
+        try:
+            raw_data = 0
+            raw_data = frame["InIceRawData"]
+            if len(raw_data) != 0:
+                has_rawdata = True
+            else: 
+                has_rawdata = False
+        except:
+            has_rawdata = False
+
+    has_pulses = False #pulse series to calculate charge cut
+    if frame.Has(PULSES_KEY):
+        try:
+            pulses = dataclasses.I3RecoPulseSeriesMap.from_frame(frame, PULSES_KEY)    
+            if not len(pulses) == 0:
+                has_pulses = True
+        except:
+            has_pulses = False
+
+    if MCTREE_KEY == 'None':
+        has_mctree = True
+    else:
+        has_mctree = frame.Has(MCTREE_KEY)
+
+    if WEIGHT_KEY == 'None':
+        has_weights = True
+    else:
+        has_weights = frame.Has(WEIGHT_KEY)
+
+    #Images can be made if event has all the keys, passed == True
+    passed = has_header and has_weights and has_rawdata and has_mctree and has_pulses 
+    if passed:
+#        print("PASSES")
+        if data_type == 'genie': #Keep only events with right interaction type
+            if frame[WEIGHT_KEY]['InteractionType'] != it:
+                return False
+
+        return True
+    else:
+#        print("Not PASSES", has_header,has_weights,has_rawdata,has_mctree,has_pulses)
+        return False
+
+
+
+
+def Get_Charges(frame):
+    global qtot
+    global st_info
+
+    #Calculate charges for cuts
+    pulses= dataclasses.I3RecoPulseSeriesMap.from_frame(frame, PULSES_KEY)
+    omkeys = pulses.keys() #all the keys in pulse series
+    strings_set = set() #all strings in the event
+    string_keys = {} #doms on each string
+
+    #Make a set of all hit strings and a dictinary of doms on those string
+    for omkey in omkeys:                                               
+        if omkey.string not in strings_set:
+            strings_set.add(omkey.string)
+            string_keys[omkey.string] = [omkey]
+        else:
+            string_keys[omkey.string].append(omkey)
+
+    #Caculate charge of each string
+    string_qs = []
+    for string, doms in string_keys.items():
+        string_q = 0
+        for omkey in doms:
+            qs = pulses[omkey]
+            qdom = sum([i.charge for i in qs])
+            string_q = string_q + qdom
+
+        # get associated string x-y position
+        st_pos = geometry[doms[0]].position
+        st_xy = np.array([st_pos.x, st_pos.y])     
+        string_qs.append([string_q,string,st_xy])
+        
+    #sort strings by charge and find max
+    string_qs.sort(key=lambda x: x[0], reverse = True)
+    qtot = sum([i[0] for i in string_qs])
+    max_qst = string_qs[0][0] 
+
+    #MAKE Charge CUT
+    if (max_qst < QST0_THRES) or (qtot < QTOT_THRES):
+   #     print("FAILED CHARGE CUT ", max_qst, qtot)
+        return False
+    
+    # find neighboring strings and sort by charge
+    # include max charge string in this list
+    # strings 11 and 19 are neighboring but almost 150 m apart
+    
+    near_max_strings = []
+    for q, st, xy in string_qs:
+        dist_st = np.sum((string_qs[0][2]-xy)**2)
+        if dist_st < DIST_ST_CUT:
+            near_max_strings.append((q, st, dist_st))
+
+    if len(near_max_strings) < N_CHANNELS:
+        print('FAILED Not enough hit stirngs in the event')
+        return False
+
+    for ch in range(N_CHANNELS): 
+        st_info[['q','num','dist']][ch] = (near_max_strings[ch][0],near_max_strings[ch][1],near_max_strings[ch][2])
+    
+    if (st_info['q'][1] < QST1_THRES) or (st_info['q'][2] < QST2_THRES):
+        return False
+
+    return True
+
+
+
+def LLH_cut(frame):
+    #make llh cut
+    has_llhcut = frame.Has('SPEFit32_DPFitParams') and frame.Has('CascadeLlhVertexFit_DPParams')
+
+    if has_llhcut:
+        llhcut = frame['SPEFit32_DPFitParams'].rlogl - frame['CascadeLlhVertexFit_DPParams'].ReducedLlh
+    else:
+        print('FAILED: No recos')
+        return False
+
+    #make llh cut
+    if llhcut < LLH_THRES:
+ #       print("Failed LLH cut = ",llhcut)
+        return False
+    else:
+        print("Passed LLH cut = ",llhcut)
+        return True
+
+
+
+
+
