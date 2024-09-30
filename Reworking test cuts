@@ -1,22 +1,10 @@
 
-#copy pasted, deleted code that had old functions in it, says uncomment two lines for muon gun so that needs to be fixed, deleted one of those because it had effective area which needs to be reworked
+#copy pasted, deleted code that had old functions in it
 #kept code that didn't refer to a function defined in makeimages.py
-def TestCuts(file_list):
-
-    if data_type =='genie':
-     #genie function
-    
-    elif data_type =='corsika':
-      #corsika function
-   
-    elif data_type == 'muongun':
+def TestCuts(file_list): 
+    if data_type == 'muongun':
         tray.Add(I3MCTpmp_2_I3MCT,Streams=[icetray.I3Frame.DAQ,icetray.I3Frame.Physics])
         tray.Add(effective_area,model=mg_model,generator=mg_generator,Streams=[icetray.I3Frame.Physics])
-
-    elif data_type == 'raw_data': #change this variable name?
-      # 'data' function
-        
-
     tray = I3Tray()
     tray.AddModule("I3Reader","reader", FilenameList = file_list)
     tray.AddSegment(QTot.CalQTot, "selfveto-qtot", pulses= PULSES_KEY)
