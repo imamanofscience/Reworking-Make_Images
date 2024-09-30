@@ -1,5 +1,19 @@
 #classes (I, Leah, made these)
 
+#muongun class
+class muongun_attributes:
+    def __init__(self):
+       WEIGHT_KEY = 'None'
+       PULSES_KEY = 'SplitInIcePulses'
+       MCTREE_KEY = 'I3MCTree_preMuonProp'
+       weight_dtype = np.dtype(
+           [
+               ('ThisisData',np.float32),
+           ]
+       )  
+
+
+
 #corsika class
 class corsika_attributes:
    def __init__(self, year, dataset):
