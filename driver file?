@@ -92,6 +92,15 @@ for files in infiles:
 
 for file in file_list:
     #main data array
+    if data_type == 'genie':
+
+    if data_type == 'muongun':
+
+    if data_type == 'data': #change?
+
+    if data_type == 'genie':
+
+
     data = []
     qtot = 0 #total event charge
     st_info = np.zeros(N_CHANNELS,dtype = st_info_dtype) #[Qst, Nst, DistST] for each image
