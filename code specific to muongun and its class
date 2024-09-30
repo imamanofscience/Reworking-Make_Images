@@ -1,4 +1,4 @@
-class Genie_attributes:
+class muongun_attributes:
     def __init__(self):
        WEIGHT_KEY = 'None'
        PULSES_KEY = 'SplitInIcePulses'
