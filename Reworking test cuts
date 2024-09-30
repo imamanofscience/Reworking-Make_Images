@@ -10,9 +10,10 @@ def TestCuts(file_list):
       #corsika function
    
     elif data_type == 'muongun':
-      #muongun function
+        tray.Add(I3MCTpmp_2_I3MCT,Streams=[icetray.I3Frame.DAQ,icetray.I3Frame.Physics])
+        tray.Add(effective_area,model=mg_model,generator=mg_generator,Streams=[icetray.I3Frame.Physics])
 
-    elif data_type == 'data': #change this variable name?
+    elif data_type == 'raw_data': #change this variable name?
       # 'data' function
         
 
