@@ -1,20 +1,17 @@
-muongun generation probability calculations- takes infiles
+#muongun generation probability calculations- takes infiles
 
-check_data: skips events that don't have the required info- takes frame
+#check_data: skips events that don't have the required info- takes frame
 
-get_charges: max string stuff- takes frame
+#get_charges: max string stuff- takes frame
 
-llh_cut: checks if 12 modules hit- frame
+#llh_cut: checks if 12 modules hit- frame
 
+#go through this code and see if it would actually work- put together check_data, llh_cut, and get_charges, deleted all return true statements
+#and added one at the very end
+#would have to change lines in test cuts
+#they all take a frame and make cuts
 
-def selecting_frames(infiles): #change names?
-
-
-
-tray.AddModule(Check_Data, "check-raw-data", Streams=[icetray.I3Frame.Physics])
-
-
-#def Check_Data(frame):
+def selecting_frames(frame): #change names?
     #HEADER and STREAM
     has_header = frame.Has("I3EventHeader") #all event should have a header
     has_stream = frame["I3EventHeader"].sub_event_stream != "NullSplit"
@@ -58,19 +55,9 @@ tray.AddModule(Check_Data, "check-raw-data", Streams=[icetray.I3Frame.Physics])
         if data_type == 'genie': #Keep only events with right interaction type
             if frame[WEIGHT_KEY]['InteractionType'] != it:
                 return False
-
-        return True
     else:
         return False
 
-
-
-
-    tray.AddModule(Get_Charges, "cuts-and-secelt", Streams=[icetray.I3Frame.Physics])
-
-
-
-#def Get_Charges(frame):
     global qtot
     global st_info
 
@@ -109,7 +96,6 @@ tray.AddModule(Check_Data, "check-raw-data", Streams=[icetray.I3Frame.Physics])
 
     #MAKE Charge CUT
     if (max_qst < QST0_THRES) or (qtot < QTOT_THRES):
-   #     print("FAILED CHARGE CUT ", max_qst, qtot)
         return False
     
     # find neighboring strings and sort by charge
@@ -123,7 +109,6 @@ tray.AddModule(Check_Data, "check-raw-data", Streams=[icetray.I3Frame.Physics])
             near_max_strings.append((q, st, dist_st))
 
     if len(near_max_strings) < N_CHANNELS:
-        print('FAILED Not enough hit stirngs in the event')
         return False
 
     for ch in range(N_CHANNELS): 
@@ -132,14 +117,6 @@ tray.AddModule(Check_Data, "check-raw-data", Streams=[icetray.I3Frame.Physics])
     if (st_info['q'][1] < QST1_THRES) or (st_info['q'][2] < QST2_THRES):
         return False
 
-    return True
-
-
-
-    tray.AddModule(LLH_cut, "llhcut", Streams=[icetray.I3Frame.Physics])
-
-
-#def LLH_cut(frame):
     #make llh cut
     has_llhcut = frame.Has('SPEFit32_DPFitParams') and frame.Has('CascadeLlhVertexFit_DPParams')
 
@@ -151,56 +128,6 @@ tray.AddModule(Check_Data, "check-raw-data", Streams=[icetray.I3Frame.Physics])
 
     #make llh cut
     if llhcut < LLH_THRES:
- #       print("Failed LLH cut = ",llhcut)
-        return False
-    else:
-        print("Passed LLH cut = ",llhcut)
-        return True
-
-
-Consolidate returning true/false:
-
-
-LLH_cut
-    if has_llhcut:
-        llhcut = frame['SPEFit32_DPFitParams'].rlogl - frame['CascadeLlhVertexFit_DPParams'].ReducedLlh
-    else:
-        print('FAILED: No recos')
         return False
 
-    #make llh cut
-    if llhcut < LLH_THRES:
- #       print("Failed LLH cut = ",llhcut)
-        return False
-    else:
-        print("Passed LLH cut = ",llhcut)
-        return True
-
-    if not has_stream:
-        return False #Dont use NullSplit frames
-
-get charges:
-
-    if (st_info['q'][1] < QST1_THRES) or (st_info['q'][2] < QST2_THRES):
-        return False
-
-    if len(near_max_strings) < N_CHANNELS:
-        return False
-
-    if (max_qst < QST0_THRES) or (qtot < QTOT_THRES):
-        return False
-
-
-check data
-
-    if passed:
-        if data_type == 'genie': #Keep only events with right interaction type
-            if frame[WEIGHT_KEY]['InteractionType'] != it:
-                return False
-
-        return True
-    else:
-        return False
-
-    if not has_stream:
-        return False #Dont use NullSplit frames
+    return True
