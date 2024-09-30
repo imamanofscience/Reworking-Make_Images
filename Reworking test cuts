@@ -42,8 +42,7 @@ def TestCuts(file_list):
         ("PickUnsaturatedATWD",True),
         ("Force",True),
         )
-    #uncomment Next two for muongun FIX THIS okay so effective_area WAS used
-    #tray.Add(I3MCTpmp_2_I3MCT,Streams=[icetray.I3Frame.DAQ,icetray.I3Frame.Physics])
+    tray.Add(Make_Image, "getwave", Streams=[icetray.I3Frame.Physics])
     tray.AddModule('TrashCan','thecan')
     tray.Execute()
     tray.Finish()
