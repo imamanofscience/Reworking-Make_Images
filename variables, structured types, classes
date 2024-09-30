@@ -1,5 +1,19 @@
 #classes (I, Leah, made these)
 
+#raw data class
+
+class raw_data_attributes:
+    def __init__(self):
+    WEIGHT_KEY = 'None'
+    PULSES_KEY = 'SplitInIcePulses'
+    MCTREE_KEY = 'None'
+    weight_dtype = np.dtype(
+        [
+            ('ThisisData',np.float32),
+        ]
+    )  
+
+
 #muongun class
 class muongun_attributes:
     def __init__(self):
