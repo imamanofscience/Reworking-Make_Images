@@ -2,6 +2,17 @@
 #primary particle finder is very data type specific and I think it should be in these functions
 
 
+    WEIGHT_KEY = 'None'
+    PULSES_KEY = 'SplitInIcePulses'
+    MCTREE_KEY = 'None'
+    weight_dtype = np.dtype(
+        [
+            ('ThisisData',np.float32),
+        ]
+    )  
+
+
+
         save = []
         calib = frame['I3Calibration']
         status = frame['I3DetectorStatus']
