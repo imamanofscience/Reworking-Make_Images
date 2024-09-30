@@ -1,4 +1,4 @@
-class Genie_attributes:
+class genie_attributes:
     def __init__(self):
         WEIGHT_KEY = "I3MCWeightDict"
         PULSES_KEY = 'SplitInIcePulses'
