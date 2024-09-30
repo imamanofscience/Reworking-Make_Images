@@ -1,3 +1,140 @@
+#classes (I, Leah, made these)
+
+#corsika class
+class corsika_attributes:
+   def __init__(self, year, dataset):
+      WEIGHT_KEY = "CorsikaWeightMap"
+      MCTREE_KEY = 'I3MCTree'
+      if year == 2012:
+        PULSES_KEY = 'SplitInIcePulses'
+        if dataset == 12379:
+            weight_dtype = np.dtype(
+            [
+                ('AreaSum',np.float32),
+                ('Atmosphere',np.float32),
+                ('BackgroundI3MCPESeriesMapCount',np.float32),
+                ('CylinderLength',np.float32),
+                ('CylinderRadius',np.float32),
+                ('EnergyPrimaryMax',np.float32),
+                ('EnergyPrimaryMin',np.float32),
+                ('FluxSum',np.float32),
+                ('I3MCPESeriesMapCount',np.float32),
+                ('Multiplicity',np.float32),
+                ('NEvents',np.float32),
+                ('OverSampling',np.float32),
+                ('ParticleType',np.float32),
+                ('Polygonato',np.float32),
+                ('PrimaryEnergy',np.float32),
+                ('PrimarySpectralIndex',np.float32),
+                ('PrimaryType',np.int64),
+                ('ThetaMax',np.float32),
+                ('ThetaMin',np.float32),
+                ('TimeScale',np.float32),
+                ('Weight',np.float32),
+            ]
+            )
+        else:
+            weight_dtype = np.dtype(
+            [
+                ("AreaSum" ,np.float32),
+                ("Atmosphere",np.float32),
+                ("CylinderLength",np.float32),
+                ("CylinderRadius" ,np.float32),
+                ("DiplopiaWeight",np.float32),
+                ("EnergyPrimaryMax",np.float32),
+                ("EnergyPrimaryMin",np.float32),
+                ("FluxSum",np.float32),
+                ("Multiplicity",np.float32),
+                ("NEvents",np.float32),
+                ("OldWeight",np.float32),
+                ("OverSampling",np.float32),
+                ("Polygonato",np.float32),
+                ("PrimaryEnergy",np.float32),
+                ("PrimarySpectralIndex",np.float32),
+                ("PrimaryType",np.int64),
+                ("ThetaMax",np.float32),
+                ("ThetaMin" ,np.float32),
+                ("TimeScale",np.float32),
+                ("Weight",np.float32)
+            ]                            
+            )    
+
+    elif year == 2011:
+        PULSES_KEY = 'OfflinePulses'
+        if dataset == 10668:
+            weight_dtype = np.dtype(
+            [
+                ('AreaSum',np.float32),
+                ('Atmosphere',np.float32),
+                ('CylinderLength',np.float32),
+                ('CylinderRadius',np.float32),
+                ('DiplopiaWeight',np.float32),
+                ('EnergyPrimaryMax',np.float32),
+                ('EnergyPrimaryMin',np.float32),
+                ('FluxSum',np.float32),
+                ('Multiplicity',np.float32),
+                ('NEvents',np.float32),
+                ('OldWeight',np.float32),
+                ('Polygonato',np.float32),
+                ('PrimaryEnergy',np.float32),
+                ('PrimarySpectralIndex',np.float32),
+                ('PrimaryType',np.int64),
+                ('ThetaMax',np.float32),
+                ('ThetaMin',np.float32),
+                ('TimeScale',np.float32),
+                ('Weight',np.float32)
+            ]
+            )       
+        else:
+            weight_dtype = np.dtype(
+            [
+                ('AreaSum',np.float32),
+                ('Atmosphere',np.float32),
+                ('CylinderLength',np.float32),
+                ('CylinderRadius',np.float32),
+                ('DiplopiaWeight',np.float32),
+                ('EnergyPrimaryMax',np.float32),
+                ('EnergyPrimaryMin',np.float32),
+                ('FluxSum',np.float32),
+                ('Multiplicity',np.float32),
+                ('NEvents',np.float32),
+                ('ParticleType',np.int64),
+                ('Polygonato',np.float32),
+                ('PrimarySpectralIndex',np.float32),
+                ('TimeScale',np.float32),
+                ('Weight',np.float32)
+            ]
+            )
+
+    elif year == 2016:
+        PULSES_KEY = 'SplitInIcePulses'
+        MCTREE_KEY = 'I3MCTree_preMuonProp'
+        weight_dtype = np.dtype(
+            [
+                ('AreaSum',np.float32),
+                ('Atmosphere',np.float32),
+                ('CylinderLength',np.float32),
+                ('CylinderRadius',np.float32),
+                ('EnergyPrimaryMax',np.float32),
+                ('EnergyPrimaryMin',np.float32),
+                ('FluxSum',np.float32),
+                ('Multiplicity',np.float32),
+                ('NEvents',np.float32),
+                ('OverSampling',np.float32),
+                ('ParticleType',np.int64),
+                ('Polygonato',np.float32),
+                ('PrimaryEnergy',np.float32),
+                ('PrimarySpectralIndex',np.float32),
+                ('PrimaryType',np.float32),
+                ('ThetaMax',np.float32),
+                ('ThetaMin',np.float32),
+                ('TimeScale',np.float32),
+                ('Weight',np.float32)
+            ]
+        )       
+
+
+
 
 GEO = 'ic86'
 C=0.299792458                                                                  
