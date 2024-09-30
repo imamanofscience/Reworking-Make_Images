@@ -7,30 +7,14 @@ get_charges: max string stuff- takes frame
 llh_cut: checks if 12 modules hit- frame
 
 
-def making_cuts(infiles): #change names?
-
-
-def harvest_generators(infiles):
-    generator = None
-    for fname in infiles:
-        f = dataio.I3File(fname)
-        fr = f.pop_frame(icetray.I3Frame.Stream('S'))
-        f.close()
-        if fr is not None:
-            for k in fr.keys():
-                if("I3TriggerHierarchy" in k): continue #hack due to I3TriggerHierchy bug
-                v = fr[k]
-                if isinstance(v, MuonGun.GenerationProbability):
-                    print ("found MG GP")
-                    if generator is None:
-                        generator = v
-                    else:
-                        generator += v
-    return generator
+def selecting_frames(infiles): #change names?
 
 
 
-def Check_Data(frame):
+tray.AddModule(Check_Data, "check-raw-data", Streams=[icetray.I3Frame.Physics])
+
+
+#def Check_Data(frame):
     #HEADER and STREAM
     has_header = frame.Has("I3EventHeader") #all event should have a header
     has_stream = frame["I3EventHeader"].sub_event_stream != "NullSplit"
@@ -71,20 +55,22 @@ def Check_Data(frame):
     #Images can be made if event has all the keys, passed == True
     passed = has_header and has_weights and has_rawdata and has_mctree and has_pulses 
     if passed:
-#        print("PASSES")
         if data_type == 'genie': #Keep only events with right interaction type
             if frame[WEIGHT_KEY]['InteractionType'] != it:
                 return False
 
         return True
     else:
-#        print("Not PASSES", has_header,has_weights,has_rawdata,has_mctree,has_pulses)
         return False
 
 
 
 
-def Get_Charges(frame):
+    tray.AddModule(Get_Charges, "cuts-and-secelt", Streams=[icetray.I3Frame.Physics])
+
+
+
+#def Get_Charges(frame):
     global qtot
     global st_info
 
@@ -150,7 +136,10 @@ def Get_Charges(frame):
 
 
 
-def LLH_cut(frame):
+    tray.AddModule(LLH_cut, "llhcut", Streams=[icetray.I3Frame.Physics])
+
+
+#def LLH_cut(frame):
     #make llh cut
     has_llhcut = frame.Has('SPEFit32_DPFitParams') and frame.Has('CascadeLlhVertexFit_DPParams')
 
@@ -169,6 +158,49 @@ def LLH_cut(frame):
         return True
 
 
+Consolidate returning true/false:
 
 
+LLH_cut
+    if has_llhcut:
+        llhcut = frame['SPEFit32_DPFitParams'].rlogl - frame['CascadeLlhVertexFit_DPParams'].ReducedLlh
+    else:
+        print('FAILED: No recos')
+        return False
 
+    #make llh cut
+    if llhcut < LLH_THRES:
+ #       print("Failed LLH cut = ",llhcut)
+        return False
+    else:
+        print("Passed LLH cut = ",llhcut)
+        return True
+
+    if not has_stream:
+        return False #Dont use NullSplit frames
+
+get charges:
+
+    if (st_info['q'][1] < QST1_THRES) or (st_info['q'][2] < QST2_THRES):
+        return False
+
+    if len(near_max_strings) < N_CHANNELS:
+        return False
+
+    if (max_qst < QST0_THRES) or (qtot < QTOT_THRES):
+        return False
+
+
+check data
+
+    if passed:
+        if data_type == 'genie': #Keep only events with right interaction type
+            if frame[WEIGHT_KEY]['InteractionType'] != it:
+                return False
+
+        return True
+    else:
+        return False
+
+    if not has_stream:
+        return False #Dont use NullSplit frames
