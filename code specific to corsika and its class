@@ -1,18 +1,12 @@
-#corsika function
+#corsika class
 class corsika_attributes:
-   def __init__(self):
-   WEIGHT_KEY = "CorsikaWeightMap"
-   MCTREE_KEY = 'I3MCTree'
-
-#incorporate this somehow
-    if year == 2012:
+   def __init__(self, year, dataset):
+      WEIGHT_KEY = "CorsikaWeightMap"
+      MCTREE_KEY = 'I3MCTree'
+      if year == 2012:
         PULSES_KEY = 'SplitInIcePulses'
-
-
-
-
         if dataset == 12379:
-            corsika_weight_dtype = np.dtype(
+            weight_dtype = np.dtype(
             [
                 ('AreaSum',np.float32),
                 ('Atmosphere',np.float32),
@@ -137,6 +131,12 @@ class corsika_attributes:
             ]
         )       
 
+
+
+
+
+
+
         w = dict(frame[WEIGHT_KEY])
         for key, val in w.items():
             if key in weight_dtype.names:
@@ -149,6 +149,8 @@ class corsika_attributes:
 #Output data format         
 if data_type == 'muongun':
 
+
+#figure this out
      
 else:
     info_dtype = np.dtype(
