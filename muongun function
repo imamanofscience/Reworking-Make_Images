@@ -1,3 +1,15 @@
+class Genie_attributes:
+    def __init__(self):
+       WEIGHT_KEY = 'None'
+       PULSES_KEY = 'SplitInIcePulses'
+       MCTREE_KEY = 'I3MCTree_preMuonProp'
+       weight_dtype = np.dtype(
+           [
+               ('ThisisData',np.float32),
+           ]
+       )  
+
+
 
    w = frame['MuonWeight'].value
         event[["id","image","qtot","qst","primary","prim_daughter","logan_veto","hese","weight_val"]]=\
