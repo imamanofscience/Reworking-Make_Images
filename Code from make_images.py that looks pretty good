@@ -19,7 +19,7 @@ def TestCuts(file_list):
     tray = I3Tray()
     tray.AddModule("I3Reader","reader", FilenameList = file_list)
     tray.AddSegment(QTot.CalQTot, "selfveto-qtot", pulses= PULSES_KEY)
-    tray.AddModule(making_cuts, "cuts-and-secelt", Streams=[icetray.I3Frame.Physics])
+    tray.AddModule(selecting_frames, "cuts-and-secelt", Streams=[icetray.I3Frame.Physics])
     tray.AddSegment(Reconstruction.OfflineCascadeReco, "CscdReco", suffix="_DP", Pulses='HLCPulses')
     tray.AddSegment(Reconstruction.MuonReco, "MuonReco", Pulses='HLCPulses')
     tray.AddSegment(Reconstruction.OfflineCascadeReco_noDC, "CscdReco_noDC", suffix="_noDC_DP", Pulses='HLCPulses')
