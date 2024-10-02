@@ -1,3 +1,11 @@
+class Make_Image(frame):
+#organizing stuff in make images:
+
+#reformatting information
+
+
+
+
 def Make_Image(frame):
     data_information = [] #empty list?? is that right?
     event = np.zeros(1,dtype = info_dtype)    
