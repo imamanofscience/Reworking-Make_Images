@@ -11,8 +11,8 @@
 #would have to change lines in test cuts
 #they all take a frame and make cuts
 
-class selecting_frames(frame): #change names?
-  def __init__(self, frame):
+class selecting_frames:
+  def __init__(self, frame, infiles):
     self.frame = frame
 
   def Check_Data(self):
@@ -142,7 +142,23 @@ class selecting_frames(frame): #change names?
     else:
         return True
 
-
+def harvest_generators(self):
+    generator = None
+    for fname in self.infiles:
+        f = dataio.I3File(fname)
+        fr = f.pop_frame(icetray.I3Frame.Stream('S'))
+        f.close()
+        if fr is not None:
+            for k in fr.keys():
+                if("I3TriggerHierarchy" in k): continue #hack due to I3TriggerHierchy bug
+                v = fr[k]
+                if isinstance(v, MuonGun.GenerationProbability):
+                    print ("found MG GP")
+                    if generator is None:
+                        generator = v
+                    else:
+                        generator += v
+    return generator
 
 
 
