@@ -5,117 +5,120 @@ class Make_Image(frame):
 
 
 
+class Make_Image(frame)
+    def __init__(self, frame):
+        self.frame = frame
 
-def Make_Image(frame):
-    data_information = [] #empty list?? is that right?
-    event = np.zeros(1,dtype = info_dtype)    
+    def Make_Image(frame): #has random stuff in it, was just tracking code that lead up to this point
+        data_information = [] #empty list?? is that right?
+        event = np.zeros(1,dtype = info_dtype)    
 
-    trck_reco = np.zeros(1,dtype = particle_dtype)
+        trck_reco = np.zeros(1,dtype = particle_dtype)
 
-    for ch in range(N_CHANNELS): 
-        st_info[['q','num','dist']][ch] = (near_max_strings[ch][0],near_max_strings[ch][1],near_max_strings[ch][2])
+        for ch in range(N_CHANNELS): 
+            st_info[['q','num','dist']][ch] = (near_max_strings[ch][0],near_max_strings[ch][1],near_max_strings[ch][2])
     
-    if (st_info['q'][1] < QST1_THRES) or (st_info['q'][2] < QST2_THRES):
-        return False
+        if (st_info['q'][1] < QST1_THRES) or (st_info['q'][2] < QST2_THRES):
+            return False
 
-    global st_info
+        global st_info
 
 
-   trck_reco[["tree_id","pdg","energy","position","direction","time","length"]] =\
-    ([trck.id.majorID, trck.id.minorID], trck.pdg_encoding, trck.energy,[trck.pos.x,trck.pos.y,trck.pos.z],\
-     [trck.dir.zenith,trck.dir.azimuth], trck.time, trck.length)
-    cscd_reco[["tree_id","pdg","energy","position","direction","time","length"]] =\
-    ([cscd.id.majorID, cscd.id.minorID], cscd.pdg_encoding, cscd.energy,[cscd.pos.x,cscd.pos.y,cscd.pos.z],\
-     [cscd.dir.zenith, cscd.dir.azimuth],cscd.time, cscd.length)
+       trck_reco[["tree_id","pdg","energy","position","direction","time","length"]] =\
+        ([trck.id.majorID, trck.id.minorID], trck.pdg_encoding, trck.energy,[trck.pos.x,trck.pos.y,trck.pos.z],\
+         [trck.dir.zenith,trck.dir.azimuth], trck.time, trck.length)
+        cscd_reco[["tree_id","pdg","energy","position","direction","time","length"]] =\
+        ([cscd.id.majorID, cscd.id.minorID], cscd.pdg_encoding, cscd.energy,[cscd.pos.x,cscd.pos.y,cscd.pos.z],\
+         [cscd.dir.zenith, cscd.dir.azimuth],cscd.time, cscd.length)
 
-    hese = np.zeros(1,dtype = hese_dtype)
-    hese_vheselfveto = True
-    hese_pos =[-9999,-9999,-9999]
-    hese_time = -999
-    if frame.Has("HESE3_VHESelfVeto"):
-        hese_vheselfveto = frame["HESE3_VHESelfVeto"].value
-        hese_pos = [frame["HESE3_VHESelfVetoVertexPos"].x,frame["HESE3_VHESelfVetoVertexPos"].y,frame["HESE3_VHESelfVetoVertexPos"].z]
-        hese_time = frame["HESE3_VHESelfVetoVertexTime"].value
-    hese[["vheselfveto","vheselfvetovertexpos","vheselfvetovertextime"]][0] =\
-    (hese_vheselfveto,hese_pos,hese_time) 
+        hese = np.zeros(1,dtype = hese_dtype)
+        hese_vheselfveto = True
+        hese_pos =[-9999,-9999,-9999]
+        hese_time = -999
+        if frame.Has("HESE3_VHESelfVeto"):
+            hese_vheselfveto = frame["HESE3_VHESelfVeto"].value
+            hese_pos = [frame["HESE3_VHESelfVetoVertexPos"].x,frame["HESE3_VHESelfVetoVertexPos"].y,frame["HESE3_VHESelfVetoVertexPos"].z]
+            hese_time = frame["HESE3_VHESelfVetoVertexTime"].value
+        hese[["vheselfveto","vheselfvetovertexpos","vheselfvetovertextime"]][0] =\
+        (hese_vheselfveto,hese_pos,hese_time) 
 
-    wf_map = frame["CalibratedWaveformsHLCATWD"]   
+        wf_map = frame["CalibratedWaveformsHLCATWD"]   
 
-for om, ps in pulses.items():
-    if not om.string in st_info['num']:
+    for om, ps in pulses.items():
+        if not om.string in st_info['num']:
                 continue
-        if om in wf_map:
-                has_good_wf = False
-                for wf in wf_map.get(om, []):
-                    if wf.status == 0:
-                        has_good_wf = True
-                if has_good_wf:
-                    continue
+            if om in wf_map:
+                    has_good_wf = False
+                    for wf in wf_map.get(om, []):
+                        if wf.status == 0:
+                            has_good_wf = True
+                    if has_good_wf:
+                        continue
                     
-            chl = np.where(st_info['num'] == om.string)
+                chl = np.where(st_info['num'] == om.string)
 
-  veto[["SPE_rlogl","Cascade_rlogl","SPE_rlogl_noDC", "Cascade_rlogl_noDC","FirstHitZ","VHESelfVetoVertexPosZ","LeastDistanceToPolygon_Veto"]] =\
-    (veto_spe_rlogl,veto_cas_rlogl,veto_spe_rlogl_ndc,veto_cas_rlogl_ndc,veto_fh_z,veto_svv_z,veto_ldp)  
+      veto[["SPE_rlogl","Cascade_rlogl","SPE_rlogl_noDC", "Cascade_rlogl_noDC","FirstHitZ","VHESelfVetoVertexPosZ","LeastDistanceToPolygon_Veto"]] =\
+        (veto_spe_rlogl,veto_cas_rlogl,veto_spe_rlogl_ndc,veto_cas_rlogl_ndc,veto_fh_z,veto_svv_z,veto_ldp)  
 
 
-im = np.zeros(shape=(N_X_BINS, N_Y_BINS, N_CHANNELS))
+    im = np.zeros(shape=(N_X_BINS, N_Y_BINS, N_CHANNELS))
 
-    for wfm in wfms:
-        wf_shift = 0
-        start_ind = min(N_X_BINS, int((wfm['time'] - min_time) / wfm['width']))
-        if start_ind >= 0:
-            end_ind = min(N_X_BINS, start_ind + len(wfm['wfm']))
-            wfm_vals = wfm['wfm'][0:end_ind-start_ind]
-        else: 
-            wf_shift = abs(start_ind)
-            start_ind = 0
-            end_ind = min(N_X_BINS, len(wfm['wfm'])-wf_shift)
-            if end_ind <0:
-                end_ind = 0
-            wfm_vals = wfm['wfm'][wf_shift:len(wfm['wfm'])]
-        im[start_ind:end_ind, wfm['dom_idx'], wfm['img_ch']] = wfm_vals
+        for wfm in wfms:
+            wf_shift = 0
+            start_ind = min(N_X_BINS, int((wfm['time'] - min_time) / wfm['width']))
+            if start_ind >= 0:
+                end_ind = min(N_X_BINS, start_ind + len(wfm['wfm']))
+                wfm_vals = wfm['wfm'][0:end_ind-start_ind]
+            else: 
+                wf_shift = abs(start_ind)
+                start_ind = 0
+                end_ind = min(N_X_BINS, len(wfm['wfm'])-wf_shift)
+                if end_ind <0:
+                    end_ind = 0
+                wfm_vals = wfm['wfm'][wf_shift:len(wfm['wfm'])]
+            im[start_ind:end_ind, wfm['dom_idx'], wfm['img_ch']] = wfm_vals
 
-   im = np.true_divide(im, 10**(-8))
-    im = im.astype(np.float32)
+        im = np.true_divide(im, 10**(-8))
+        im = im.astype(np.float32)
     
-    im = np.true_divide(im, 10**(-8))
-    im = im.astype(np.float32)
+        im = np.true_divide(im, 10**(-8))
+        im = im.astype(np.float32)
     
-    if np.sum(im[:,:,0])==0:
-        print("FAILED no image 0")
-        return False
-    if np.sum(im[:,:,1])==0:
-        print("FAILED no image 1")
-        return False
-    if np.sum(im[:,:,2])==0:
-        print("FAILED no image 2")
-        return False
+        if np.sum(im[:,:,0])==0:
+            print("FAILED no image 0")
+            return False
+        if np.sum(im[:,:,1])==0:
+            print("FAILED no image 1")
+            return False
+        if np.sum(im[:,:,2])==0:
+            print("FAILED no image 2")
+            return False
 
 
 #Log id info 
-    id = np.zeros(1,dtype = id_dtype)
-    H = frame["I3EventHeader"]
-    id[["run_id","sub_run_id","event_id","sub_event_id"]] = (H.run_id,H.sub_run_id,H.event_id,H.sub_event_id)
+        id = np.zeros(1,dtype = id_dtype)
+        H = frame["I3EventHeader"]
+        id[["run_id","sub_run_id","event_id","sub_event_id"]] = (H.run_id,H.sub_run_id,H.event_id,H.sub_event_id)
 
 
     #Log Weight info
-    weight = np.zeros(1,dtype = weight_dtype)
-    if data_type in ['genie', 'corsika']:
-        w = dict(frame[WEIGHT_KEY])
-        for key, val in w.items():
-            if key in weight_dtype.names:
-                weight[key] = val
+        weight = np.zeros(1,dtype = weight_dtype)
+        if data_type in ['genie', 'corsika']:
+            w = dict(frame[WEIGHT_KEY])
+            for key, val in w.items():
+                if key in weight_dtype.names:
+                    weight[key] = val
 
 
     #Log all the event info
-    if data_type == 'muongun':
-        w = frame['MuonWeight'].value
-        event[["id","image","qtot","qst","primary","prim_daughter","logan_veto","hese","weight_val"]]=\
-           (id[0], im, qtot, st_info, primary[0], prim_daughter[0], veto[0],hese[0], w)
-    else:
-        event[["id","image","qtot","qst","primary","prim_daughter","trck_reco","cscd_reco","logan_veto","hese","weight_dict"]]=\
-           (id[0], im, qtot, st_info, primary[0], prim_daughter[0],trck_reco[0],cscd_reco[0],veto[0],hese[0], weight[0])    
+        if data_type == 'muongun':
+            w = frame['MuonWeight'].value
+            event[["id","image","qtot","qst","primary","prim_daughter","logan_veto","hese","weight_val"]]=\
+               (id[0], im, qtot, st_info, primary[0], prim_daughter[0], veto[0],hese[0], w)
+        else:
+            event[["id","image","qtot","qst","primary","prim_daughter","trck_reco","cscd_reco","logan_veto","hese","weight_dict"]]=\
+               (id[0], im, qtot, st_info, primary[0], prim_daughter[0],trck_reco[0],cscd_reco[0],veto[0],hese[0], weight[0])    
 
 
 
-    data_information.append(event)
+        data_information.append(event)
