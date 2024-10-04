@@ -18,16 +18,3 @@ def harvest_generators(infiles):
                     else:
                         generator += v
     return generator
-
-if data_type == 'muongun':
-    muongun_nfiles={21317:9996,21316:9999,21315:15000}
-    generator_set1_infile=glob.glob("/data/sim/IceCube/2016/generated/MuonGun/21315/0000000-0000999/*.i3.zst")
-    generator_set1=harvest_generators([generator_set1_infile[0]]); infiles_set1 = muongun_nfiles[21315]
-    generator_set2_infile=glob.glob("/data/sim/IceCube/2016/generated/MuonGun/21316/0000000-0000999/*.i3.zst")
-    generator_set2=harvest_generators([generator_set2_infile[0]]); infiles_set2 = muongun_nfiles[21316]
-    generator_set3_infile=glob.glob("/data/sim/IceCube/2016/generated/MuonGun/21317/0000000-0000999/*.i3.zst")
-    generator_set3=harvest_generators([generator_set3_infile[0]]); infiles_set3 = muongun_nfiles[21317]
-    mg_generator=((infiles_set1*generator_set1) +
-               (infiles_set2*generator_set2) +
-               (infiles_set3*generator_set3))
-    mg_model = MuonGun.load_model('GaisserH4a_atmod12_SIBYLL')
