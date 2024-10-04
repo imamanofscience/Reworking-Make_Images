@@ -11,18 +11,22 @@
 #would have to change lines in test cuts
 #they all take a frame and make cuts
 
-def selecting_frames(frame): #change names?
+class selecting_frames(frame): #change names?
+  def __init__(self, frame):
+    self.frame = frame
+
+  def Check_Data(self):
     #HEADER and STREAM
-    has_header = frame.Has("I3EventHeader") #all event should have a header
-    has_stream = frame["I3EventHeader"].sub_event_stream != "NullSplit"
+    has_header = self.frame.Has("I3EventHeader") #all event should have a header
+    has_stream = self.frame["I3EventHeader"].sub_event_stream != "NullSplit"
     if not has_stream:
         return False #Dont use NullSplit frames
 
     has_rawdata =  False #data wich stores raw waveform info
-    if frame.Has("InIceRawData"):
+    if self.frame.Has("InIceRawData"):
         try:
             raw_data = 0
-            raw_data = frame["InIceRawData"]
+            raw_data = self.frame["InIceRawData"]
             if len(raw_data) != 0:
                 has_rawdata = True
             else: 
@@ -31,9 +35,9 @@ def selecting_frames(frame): #change names?
             has_rawdata = False
 
     has_pulses = False #pulse series to calculate charge cut
-    if frame.Has(PULSES_KEY):
+    if self.frame.Has(PULSES_KEY):
         try:
-            pulses = dataclasses.I3RecoPulseSeriesMap.from_frame(frame, PULSES_KEY)    
+            pulses = dataclasses.I3RecoPulseSeriesMap.from_frame(self.frame, PULSES_KEY)    
             if not len(pulses) == 0:
                 has_pulses = True
         except:
@@ -42,27 +46,31 @@ def selecting_frames(frame): #change names?
     if MCTREE_KEY == 'None':
         has_mctree = True
     else:
-        has_mctree = frame.Has(MCTREE_KEY)
+        has_mctree = self.frame.Has(MCTREE_KEY)
 
     if WEIGHT_KEY == 'None':
         has_weights = True
     else:
-        has_weights = frame.Has(WEIGHT_KEY)
+        has_weights = self.frame.Has(WEIGHT_KEY)
 
     #Images can be made if event has all the keys, passed == True
     passed = has_header and has_weights and has_rawdata and has_mctree and has_pulses 
     if passed:
         if data_type == 'genie': #Keep only events with right interaction type
-            if frame[WEIGHT_KEY]['InteractionType'] != it:
+            if self.frame[WEIGHT_KEY]['InteractionType'] != it:
                 return False
+
+        return True
     else:
         return False
 
+
+  def Get_Charges(self):
     global qtot
     global st_info
 
     #Calculate charges for cuts
-    pulses= dataclasses.I3RecoPulseSeriesMap.from_frame(frame, PULSES_KEY)
+    pulses= dataclasses.I3RecoPulseSeriesMap.from_frame(self.frame, PULSES_KEY)
     omkeys = pulses.keys() #all the keys in pulse series
     strings_set = set() #all strings in the event
     string_keys = {} #doms on each string
@@ -117,17 +125,24 @@ def selecting_frames(frame): #change names?
     if (st_info['q'][1] < QST1_THRES) or (st_info['q'][2] < QST2_THRES):
         return False
 
+    return True
+
+  def LLH_cut(self):
     #make llh cut
-    has_llhcut = frame.Has('SPEFit32_DPFitParams') and frame.Has('CascadeLlhVertexFit_DPParams')
+    has_llhcut = self.frame.Has('SPEFit32_DPFitParams') and self.frame.Has('CascadeLlhVertexFit_DPParams')
 
     if has_llhcut:
-        llhcut = frame['SPEFit32_DPFitParams'].rlogl - frame['CascadeLlhVertexFit_DPParams'].ReducedLlh
+        llhcut = self.frame['SPEFit32_DPFitParams'].rlogl - self.frame['CascadeLlhVertexFit_DPParams'].ReducedLlh
     else:
-        print('FAILED: No recos')
         return False
 
     #make llh cut
     if llhcut < LLH_THRES:
         return False
+    else:
+        return True
 
-    return True
+
+
+
+
