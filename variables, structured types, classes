@@ -203,6 +203,11 @@ class data_specific_attributes:
                 ]
             )       
 
+#example of code that would use these classes
+data_attributes = data_specific_attributes(data_type, year, dataset)
+data_attributes.PULSES_KEY
+
+
 
 GEO = 'ic86'
 C=0.299792458                                                                  
