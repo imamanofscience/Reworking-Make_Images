@@ -1,8 +1,8 @@
 class Make_Image(frame):
 #organizing stuff in make images:
 
-#reformatting information
-#Log logan's veto parameters
+  def reformatting_information(self): #reformatting information
+    #Log logan's veto parameters
     global geometry
     veto = np.zeros(1,dtype = veto_dtype)
     trck_reco = np.zeros(1,dtype = particle_dtype)
@@ -41,7 +41,7 @@ class Make_Image(frame):
                                 'om_pos': [geometry[omkey].position.x,geometry[omkey].position.y,geometry[omkey].position.z]
                                 })
 
- wf_times_arr = np.zeros(shape=(N_Y_BINS, N_CHANNELS))
+    wf_times_arr = np.zeros(shape=(N_Y_BINS, N_CHANNELS))
     wf_pos_arr = np.zeros(shape=(3,N_Y_BINS, N_CHANNELS))
     
     if data_type == 'data':
@@ -101,10 +101,10 @@ class Make_Image(frame):
     else:
         min_time = wf_times[0]
 
-#finding primary particle
+  def find_primary_particle(self): #finding primary particle
 
-  if not data_type == 'data':
-    #find primary particle
+    if not data_type == 'data':
+        #find primary particle
         mctree = frame[MCTREE_KEY]
         daughter = None
         if data_type == 'genie':
@@ -119,7 +119,7 @@ class Make_Image(frame):
             prim = dataclasses.get_most_energetic_primary(mctree)
             daughter = dataclasses.get_most_energetic_muon(mctree)
 
-  #if no children, then daughter is a duplicate of primary
+    #if no children, then daughter is a duplicate of primary
         if  daughter is None:
             print("MCTree has no primary children")
             primary[["tree_id","pdg","energy","position","direction","time","length"]] =\
@@ -145,10 +145,9 @@ class Make_Image(frame):
              [daughter.dir.zenith,daughter.dir.azimuth],daughter.time,daughter.length)
     
 
-#making the image/event
+  def create_image(self): #making the image/event
     global data 
-
-global st_info
+    global st_info
 
 
     #Log Weight info
