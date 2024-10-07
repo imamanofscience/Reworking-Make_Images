@@ -3,6 +3,7 @@ class Make_Image(frame):
 
 #reformatting information
 #Log logan's veto parameters
+    global geometry
     veto = np.zeros(1,dtype = veto_dtype)
     trck_reco = np.zeros(1,dtype = particle_dtype)
     cscd_reco = np.zeros(1,dtype = particle_dtype)
@@ -61,6 +62,44 @@ class Make_Image(frame):
                 if has_good_wf:
                     continue
 
+         p_time = np.min([i.time for i in ps])
+            min_time = p_time - width*15
+            max_time = p_time + width*112
+            times = np.linspace(min_time, max_time, 128)
+
+            cal = calib.dom_cal[om]
+            stat = status.dom_status[om]
+            wf_vals=wavereform.refold_pulses(ps, I3Waveform.ATWD, 0, cal, stat, times, False)
+
+            wfms.append({
+                    'wfm': wf_vals,
+                    'time': min_time,  
+                    'width': width,
+                    'dom_idx': om.om - 1,
+                    'img_ch': chl[0][0],
+                    'om_pos': [geometry[om].position.x,geometry[om].position.y,geometry[om].position.z]
+                    })
+
+    if len(wfms) < 2:
+        print("FAILED only %d WF" %len(wfms) )
+        return False
+
+
+    #we neeed to prevent early noise hits from shifting the actual
+    #interaction from the image time frame
+    #first work out when the first waveforn starts
+    wf_times = np.array([wf['time'] for wf in wfms])
+    wf_times = wf_times[wf_times.argsort()]
+  
+    #find the biggest differnece between starting times
+    diff_times = np.diff(wf_times[:N_NOISE_HITS])
+    max_diff_pos = np.argmax(diff_times)
+
+    #check if the images needs to be shifted and work out the shift
+    if diff_times[max_diff_pos] > MAX_TIME_SHIFT:
+        min_time = wf_times[max_diff_pos+1]
+    else:
+        min_time = wf_times[0]
 
 #finding primary particle
 
@@ -107,6 +146,10 @@ class Make_Image(frame):
     
 
 #making the image/event
+    global data 
+
+global st_info
+
 
     #Log Weight info
     weight = np.zeros(1,dtype = weight_dtype)
@@ -150,55 +193,9 @@ veto[["SPE_rlogl","Cascade_rlogl","SPE_rlogl_noDC", "Cascade_rlogl_noDC","FirstH
 
     im = np.zeros(shape=(N_X_BINS, N_Y_BINS, N_CHANNELS))
 
+    chl = np.where(st_info['num'] == om.string)
 
-def Make_Image(frame):
-    global data 
-    global geometry
-    global st_info
-
-                    
-            chl = np.where(st_info['num'] == om.string)
-            p_time = np.min([i.time for i in ps])
-            min_time = p_time - width*15
-            max_time = p_time + width*112
-            times = np.linspace(min_time, max_time, 128)
-
-            cal = calib.dom_cal[om]
-            stat = status.dom_status[om]
-            wf_vals=wavereform.refold_pulses(ps, I3Waveform.ATWD, 0, cal, stat, times, False)
-            
-            wfms.append({
-                    'wfm': wf_vals,
-                    'time': min_time,  
-                    'width': width,
-                    'dom_idx': om.om - 1,
-                    'img_ch': chl[0][0],
-                    'om_pos': [geometry[om].position.x,geometry[om].position.y,geometry[om].position.z]
-                    })
-
-    if len(wfms) < 2:
-        print("FAILED only %d WF" %len(wfms) )
-        return False
-
-    #we neeed to prevent early noise hits from shifting the actual
-    #interaction from the image time frame
-    #first work out when the first waveforn starts
-    wf_times = np.array([wf['time'] for wf in wfms])
-    wf_times = wf_times[wf_times.argsort()]
-  
-    #find the biggest differnece between starting times
-    diff_times = np.diff(wf_times[:N_NOISE_HITS])
-    max_diff_pos = np.argmax(diff_times)
-    
-    #check if the images needs to be shifted and work out the shift
-    if diff_times[max_diff_pos] > MAX_TIME_SHIFT:
-        min_time = wf_times[max_diff_pos+1]
-    else:
-        min_time = wf_times[0]
-
-    
-    
-    #make images
+  #make images
     for wfm in wfms:
         wf_shift = 0
         start_ind = min(N_X_BINS, int((wfm['time'] - min_time) / wfm['width']))
@@ -215,14 +212,10 @@ def Make_Image(frame):
         im[start_ind:end_ind, wfm['dom_idx'], wfm['img_ch']] = wfm_vals
         wf_times_arr[wfm['dom_idx'], wfm['img_ch']] = wfm['time']
         wf_pos_arr[0:3,wfm['dom_idx'], wfm['img_ch']] = wfm['om_pos']
-        
-        
-        if wf_shift > 0:
-            print("the images were shifted by {0:.3f}".format(wf_shift))
-                
+
     im = np.true_divide(im, 10**(-8))
     im = im.astype(np.float32)
-    
+
     if np.sum(im[:,:,0])==0:
         print("FAILED no image 0")
         return False
@@ -232,9 +225,10 @@ def Make_Image(frame):
     if np.sum(im[:,:,2])==0:
         print("FAILED no image 2")
         return False
-   
+
     event = np.zeros(1,dtype = info_dtype)    
-    #Log all the event info
+
+       #Log all the event info
     if data_type == 'muongun':
         w = frame['MuonWeight'].value
         event[["id","image","qtot","qst","primary","prim_daughter","logan_veto","hese","weight_val"]]=\
@@ -242,7 +236,7 @@ def Make_Image(frame):
     else:
         event[["id","image","qtot","qst","primary","prim_daughter","trck_reco","cscd_reco","logan_veto","hese","weight_dict"]]=\
            (id[0], im, qtot, st_info, primary[0], prim_daughter[0],trck_reco[0],cscd_reco[0],veto[0],hese[0], weight[0])
-#    print(event['qtot'],event['qst'],event['logan_veto'])
-#    print(event['trck_reco'])
-#    print(event['cscd_reco'])
     data.append(event)
+
+def Make_Image(frame):
+    
