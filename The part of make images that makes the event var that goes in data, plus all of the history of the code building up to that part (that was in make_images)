@@ -1,11 +1,11 @@
 class Make_Image(frame):
 #organizing stuff in make images:
 
-geometry st_info data should be self.objects (init) in cuts and then import cuts
-self.st_info = cuts.cuts(populate_st_info)
-??? or not ??? maybe another way???
-return st_info etc in a function and then make it equal to a var and put that into make images !
-for testing have main that runs everything
+#geometry st_info data should be self.objects (init) in cuts and then import cuts
+#self.st_info = cuts.cuts(populate_st_info)
+#??? or not ??? maybe another way???
+#return st_info etc in a function and then make it equal to a var and put that into make images !
+#for testing have main that runs everything
 
   def reformatting_information(self): #reformatting information
     #Log logan's veto parameters
@@ -168,14 +168,14 @@ for testing have main that runs everything
 #           OneWeight, PrimaryNeutrinoEnergy, InteractionType, PrimaryNeutrinoZenith, PrimaryNeutrinoType
 #        weight[list(w.keys())] = tuple(w.values())
 
-      #Log id info 
-      id = np.zeros(1,dtype = id_dtype)
-      H = frame["I3EventHeader"]
-      id[["run_id","sub_run_id","event_id","sub_event_id"]] = (H.run_id,H.sub_run_id,H.event_id,H.sub_event_id)
+    #Log id info 
+    id = np.zeros(1,dtype = id_dtype)
+    H = frame["I3EventHeader"]
+    id[["run_id","sub_run_id","event_id","sub_event_id"]] = (H.run_id,H.sub_run_id,H.event_id,H.sub_event_id)
 
-      #Log MCTree info 
-      primary = np.zeros(1,dtype = particle_dtype)
-      prim_daughter = np.zeros(1,dtype = particle_dtype)
+    #Log MCTree info 
+    primary = np.zeros(1,dtype = particle_dtype)
+    prim_daughter = np.zeros(1,dtype = particle_dtype)
 
     #Log HESE veto perameters 
     hese = np.zeros(1,dtype = hese_dtype)
@@ -189,7 +189,7 @@ for testing have main that runs everything
     hese[["vheselfveto","vheselfvetovertexpos","vheselfvetovertextime"]][0] =\
     (hese_vheselfveto,hese_pos,hese_time) 
 
-veto[["SPE_rlogl","Cascade_rlogl","SPE_rlogl_noDC", "Cascade_rlogl_noDC","FirstHitZ","VHESelfVetoVertexPosZ","LeastDistanceToPolygon_Veto"]] =\
+    veto[["SPE_rlogl","Cascade_rlogl","SPE_rlogl_noDC", "Cascade_rlogl_noDC","FirstHitZ","VHESelfVetoVertexPosZ","LeastDistanceToPolygon_Veto"]] =\
     (veto_spe_rlogl,veto_cas_rlogl,veto_spe_rlogl_ndc,veto_cas_rlogl_ndc,veto_fh_z,veto_svv_z,veto_ldp)   
 
     wf_map = frame["CalibratedWaveformsHLCATWD"]   
@@ -200,7 +200,7 @@ veto[["SPE_rlogl","Cascade_rlogl","SPE_rlogl_noDC", "Cascade_rlogl_noDC","FirstH
 
     chl = np.where(st_info['num'] == om.string)
 
-  #make images
+    #make images
     for wfm in wfms:
         wf_shift = 0
         start_ind = min(N_X_BINS, int((wfm['time'] - min_time) / wfm['width']))
@@ -243,5 +243,4 @@ veto[["SPE_rlogl","Cascade_rlogl","SPE_rlogl_noDC", "Cascade_rlogl_noDC","FirstH
            (id[0], im, qtot, st_info, primary[0], prim_daughter[0],trck_reco[0],cscd_reco[0],veto[0],hese[0], weight[0])
     data.append(event)
 
-def Make_Image(frame):
     
