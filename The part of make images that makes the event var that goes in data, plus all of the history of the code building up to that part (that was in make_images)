@@ -7,6 +7,11 @@ class Make_Image(frame):
 #return st_info etc in a function and then make it equal to a var and put that into make images !
 #for testing have main that runs everything
 
+  def main_function(self):
+    self.reformatting_information()
+    self.find_primary_particle()
+    self.create_image()
+
   def reformatting_information(self): #reformatting information
     #Log logan's veto parameters
     global geometry
