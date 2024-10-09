@@ -1,6 +1,8 @@
 class Make_Image(frame):
 #organizing stuff in make images:
 
+geometry st_info data should be self.objects (init)
+
   def reformatting_information(self): #reformatting information
     #Log logan's veto parameters
     global geometry
