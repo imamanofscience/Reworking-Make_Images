@@ -162,14 +162,14 @@ class Make_Image(frame):
 #           OneWeight, PrimaryNeutrinoEnergy, InteractionType, PrimaryNeutrinoZenith, PrimaryNeutrinoType
 #        weight[list(w.keys())] = tuple(w.values())
 
-#Log id info 
-id = np.zeros(1,dtype = id_dtype)
-H = frame["I3EventHeader"]
-id[["run_id","sub_run_id","event_id","sub_event_id"]] = (H.run_id,H.sub_run_id,H.event_id,H.sub_event_id)
+      #Log id info 
+      id = np.zeros(1,dtype = id_dtype)
+      H = frame["I3EventHeader"]
+      id[["run_id","sub_run_id","event_id","sub_event_id"]] = (H.run_id,H.sub_run_id,H.event_id,H.sub_event_id)
 
-#Log MCTree info 
-primary = np.zeros(1,dtype = particle_dtype)
-prim_daughter = np.zeros(1,dtype = particle_dtype)
+      #Log MCTree info 
+      primary = np.zeros(1,dtype = particle_dtype)
+      prim_daughter = np.zeros(1,dtype = particle_dtype)
 
     #Log HESE veto perameters 
     hese = np.zeros(1,dtype = hese_dtype)
