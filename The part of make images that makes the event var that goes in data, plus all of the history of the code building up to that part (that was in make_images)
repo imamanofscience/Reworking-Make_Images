@@ -1,11 +1,12 @@
-class Make_Image(frame):
-#organizing stuff in make images:
 
 #geometry st_info data should be self.objects (init) in cuts and then import cuts
 #self.st_info = cuts.cuts(populate_st_info)
 #??? or not ??? maybe another way???
 #return st_info etc in a function and then make it equal to a var and put that into make images !
 #for testing have main that runs everything
+
+class Make_Image(frame):
+#organizing stuff in make images:
 
   def main_function(self):
     self.reformatting_information()
